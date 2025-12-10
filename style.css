@@ -1166,7 +1166,33 @@ textarea.form-input {
     }
     
     .hero-decoration {
-        display: none;
+        height: 300px;
+        margin-top: 2rem;
+    }
+    
+    .decoration-circle {
+        animation: floatPanel 3s ease-in-out infinite;
+    }
+    
+    .circle-1 {
+        width: 200px;
+        height: 220px;
+        top: 0;
+        right: 50px;
+    }
+    
+    .circle-2 {
+        width: 160px;
+        height: 180px;
+        top: 80px;
+        right: 180px;
+    }
+    
+    .circle-3 {
+        width: 140px;
+        height: 160px;
+        top: 200px;
+        right: 30px;
     }
     
     .expertise-grid {
@@ -1179,7 +1205,7 @@ textarea.form-input {
     }
     
     .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 1.5rem;
     }
 }
@@ -1274,6 +1300,49 @@ textarea.form-input {
     .hero {
         min-height: auto;
         padding: 5rem 1rem 3rem;
+    }
+    
+    .hero-decoration {
+        height: 250px;
+        margin-top: 2rem;
+        position: relative;
+    }
+    
+    .decoration-circle {
+        position: absolute;
+    }
+    
+    .circle-1 {
+        width: 180px;
+        height: 200px;
+        top: 0;
+        right: 20px;
+    }
+    
+    .circle-1::before {
+        font-size: 4rem;
+    }
+    
+    .circle-2 {
+        width: 140px;
+        height: 160px;
+        top: 60px;
+        right: 160px;
+    }
+    
+    .circle-2::before {
+        font-size: 3rem;
+    }
+    
+    .circle-3 {
+        width: 120px;
+        height: 140px;
+        top: 180px;
+        right: 10px;
+    }
+    
+    .circle-3::before {
+        font-size: 2rem;
     }
     
     .hero-title {
@@ -1499,6 +1568,44 @@ textarea.form-input {
         padding: 4rem 0.75rem 2rem;
     }
     
+    .hero-decoration {
+        height: 200px;
+        margin-top: 1.5rem;
+    }
+    
+    .circle-1 {
+        width: 140px;
+        height: 160px;
+        top: 0;
+        right: 10px;
+    }
+    
+    .circle-1::before {
+        font-size: 3rem;
+    }
+    
+    .circle-2 {
+        width: 110px;
+        height: 130px;
+        top: 50px;
+        right: 120px;
+    }
+    
+    .circle-2::before {
+        font-size: 2.5rem;
+    }
+    
+    .circle-3 {
+        width: 100px;
+        height: 110px;
+        top: 140px;
+        right: 5px;
+    }
+    
+    .circle-3::before {
+        font-size: 1.5rem;
+    }
+    
     .hero-title {
         font-size: 2rem;
     }
@@ -1546,12 +1653,6 @@ textarea.form-input {
     }
 }
 
-/* Écrans larges */
-@media (max-width: 1200px) and (min-width: 769px) {
-    .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 /* ============================================
    SCROLL ANIMATIONS
