@@ -3,9 +3,11 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Smooth scroll for navigation links
     const navLinks = document.querySelectorAll('.nav-link');
-    
+    const sections = document.querySelectorAll('section[id]');
+    const nav = document.querySelector('.nav');
+
+    // Smooth scroll for navigation links
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -13,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetSection = document.querySelector(targetId);
             
             if (targetSection) {
-                const offsetTop = targetSection.offsetTop - 80;
+                // Ajuster le décalage pour la navbar fixe
+                const offsetTop = targetSection.offsetTop - nav.offsetHeight;
                 window.scrollTo({
                     top: offsetTop,
                     behavior: 'smooth'
@@ -25,15 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================
     // ACTIVE NAVIGATION HIGHLIGHTING
     // ============================================
-
-    const sections = document.querySelectorAll('section[id]');
     
     const highlightNavigation = () => {
         const scrollY = window.pageYOffset;
         
         sections.forEach(section => {
             const sectionHeight = section.offsetHeight;
-            const sectionTop = section.offsetTop - 100;
+            const sectionTop = section.offsetTop - (nav.offsetHeight + 20); // Ajustement avec la hauteur de la navbar
             const sectionId = section.getAttribute('id');
             const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
             
@@ -47,9 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addEventListener('scroll', highlightNavigation);
+    highlightNavigation(); // Appel initial
 
     // ============================================
-    // SCROLL ANIMATIONS
+    // SCROLL ANIMATIONS (Intersection Observer)
     // ============================================
 
     const observerOptions = {
@@ -68,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Observe elements
     const animateElements = document.querySelectorAll(
-        '.expertise-item, .experience-card, .skill-category, .project-card, .contact-item'
+        '.expertise-item, .skill-category, .project-card, .contact-card'
     );
     
     animateElements.forEach(el => {
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // TRANSITION ANIMATIONS ON SCROLL
+    // TRANSITION ANIMATIONS ON SCROLL (Panels)
     // ============================================
 
     const transitionObserverOptions = {
@@ -90,17 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Trigger sliding panels
                 const slidingPanels = entry.target.querySelectorAll('.sliding-panel');
                 slidingPanels.forEach((panel, index) => {
-                    setTimeout(() => {
-                        panel.classList.add('animate');
-                    }, index * 150);
+                    // Délai de 0 à 300ms pour l'effet de cascade
+                    panel.style.animationDelay = `${index * 150}ms`; 
+                    panel.classList.add('animate');
                 });
                 
                 // Trigger unfolding panels
                 const foldSections = entry.target.querySelectorAll('.fold-section');
                 foldSections.forEach((section, index) => {
-                    setTimeout(() => {
-                        section.classList.add('animate');
-                    }, index * 200);
+                    // Délai de 0 à 200ms pour l'effet de cascade
+                    section.style.animationDelay = `${index * 200}ms`;
+                    section.classList.add('animate');
                 });
                 
                 transitionObserver.unobserve(entry.target);
@@ -116,20 +118,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ============================================
     // TIMELINE ITEM STAGGERED ANIMATION
+    // Utilisation d'un IntersectionObserver pour les déclencher
     // ============================================
-
     const timelineItems = document.querySelectorAll('.timeline-item');
     
-    timelineItems.forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.2}s`;
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                const visibleItems = Array.from(timelineItems).filter(item => item.getBoundingClientRect().top < window.innerHeight);
+                const currentItemIndex = visibleItems.indexOf(entry.target);
+
+                if (currentItemIndex !== -1) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, currentItemIndex * 150); // Effet de cascade
+                }
+                timelineObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    timelineItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'all 0.6s ease-out';
+        timelineObserver.observe(item);
     });
+
 
     // ============================================
     // NAVBAR BACKGROUND ON SCROLL
+    // Ajout d'une ombre après un certain scroll
     // ============================================
-
-    const nav = document.querySelector('.nav');
-    let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
@@ -139,8 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             nav.style.boxShadow = 'none';
         }
-        
-        lastScroll = currentScroll;
     });
 
     // ============================================
@@ -176,60 +195,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
+                // Rotation légère: max 5deg
+                const rotateX = (y - centerY) / 30;
+                const rotateY = (centerX - x) / 30;
                 
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
             });
             
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(-8px)';
             });
         });
     }
 
     // ============================================
-    // COUNTER ANIMATION FOR STATS (if needed)
-    // ============================================
-
-    const animateCounter = (element, target, duration = 2000) => {
-        let current = 0;
-        const increment = target / (duration / 16);
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                element.textContent = target;
-                clearInterval(timer);
-            } else {
-                element.textContent = Math.floor(current);
-            }
-        }, 16);
-    };
-
-    // ============================================
-    // PARALLAX EFFECT FOR HERO DECORATION
+    // PARALLAX EFFECT FOR HERO DECORATION (Desktop only)
     // ============================================
 
     const heroDecoration = document.querySelector('.hero-decoration');
     
-    if (heroDecoration) {
-        window.addEventListener('scroll', () => {
+    if (heroDecoration && window.innerWidth > 768) {
+        // Utilisation de la fonction debounce pour optimiser l'écouteur d'événement
+        const parallaxScroll = () => {
             const scrolled = window.pageYOffset;
-            const rate = scrolled * 0.3;
+            const rate = scrolled * 0.3; // Taux de défilement plus lent
             heroDecoration.style.transform = `translateY(${rate}px)`;
-        });
+        };
+
+        window.addEventListener('scroll', throttle(parallaxScroll, 10));
     }
 
-    // ============================================
-    // LOADING ANIMATION
-    // ============================================
-
-    window.addEventListener('load', () => {
-        document.body.classList.add('loaded');
-    });
 
     // ============================================
-    // FORM VALIDATION (if you add a contact form)
+    // FORM VALIDATION (Ajout du support du message)
     // ============================================
 
     const contactForm = document.querySelector('#contact-form');
@@ -238,14 +236,34 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // Add your form validation and submission logic here
-            const formData = new FormData(contactForm);
+            const form = e.target;
+            const formData = new FormData(form);
+            const formMessage = document.createElement('div');
+            formMessage.classList.add('form-message');
             
-            console.log('Form submitted:', Object.fromEntries(formData));
-            
-            // Show success message
-            alert('Message envoyé avec succès !');
-            contactForm.reset();
+            // Simuler l'envoi du formulaire
+            setTimeout(() => {
+                // Remplacer par votre vraie logique d'envoi (ex: fetch)
+                const isSuccess = Math.random() > 0.1; // 90% de succès pour la démo
+                
+                if (isSuccess) {
+                    formMessage.classList.add('success');
+                    formMessage.textContent = 'Message envoyé avec succès ! Je reviendrai vers vous rapidement.';
+                    form.reset();
+                } else {
+                    formMessage.classList.add('error');
+                    formMessage.textContent = 'Erreur lors de l\'envoi. Veuillez réessayer ou m\'envoyer un e-mail directement.';
+                }
+
+                // Supprimer l'ancien message
+                const existingMessage = form.querySelector('.form-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+                
+                form.appendChild(formMessage);
+                
+            }, 1000);
         });
     }
 
@@ -257,11 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const navMenu = document.querySelector('.nav-menu');
         const navContainer = document.querySelector('.nav-container');
         
-        // Vérifier si le hamburger existe déjà
         let hamburger = document.querySelector('.hamburger');
         
         if (window.innerWidth <= 768) {
-            // Créer le hamburger s'il n'existe pas
             if (!hamburger) {
                 hamburger = document.createElement('button');
                 hamburger.classList.add('hamburger');
@@ -274,21 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 navContainer.appendChild(hamburger);
                 
-                // Fonction pour toggle le menu
-                const toggleMenu = () => {
-                    const isActive = navMenu.classList.toggle('active');
-                    hamburger.classList.toggle('active');
-                    hamburger.setAttribute('aria-expanded', isActive);
-                    document.body.style.overflow = isActive ? 'hidden' : '';
-                    
-                    if (isActive) {
-                        createOverlay();
-                    } else {
-                        removeOverlay();
-                    }
-                };
-                
-                // Fonction pour créer l'overlay
                 const createOverlay = () => {
                     let overlay = document.querySelector('.menu-overlay');
                     if (!overlay) {
@@ -299,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
                 
-                // Fonction pour supprimer l'overlay
                 const removeOverlay = () => {
                     const overlay = document.querySelector('.menu-overlay');
                     if (overlay) {
@@ -308,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
                 
-                // Fonction pour fermer le menu
                 const closeMenu = () => {
                     navMenu.classList.remove('active');
                     hamburger.classList.remove('active');
@@ -316,12 +315,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.body.style.overflow = '';
                     removeOverlay();
                 };
+
+                const toggleMenu = () => {
+                    const isActive = navMenu.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                    hamburger.setAttribute('aria-expanded', isActive);
+                    // Empêcher le scroll sur le body quand le menu est ouvert
+                    document.body.style.overflow = isActive ? 'hidden' : ''; 
+                    
+                    if (isActive) {
+                        createOverlay();
+                    } else {
+                        removeOverlay();
+                    }
+                };
                 
-                // Ajouter l'événement click au hamburger
                 hamburger.addEventListener('click', toggleMenu);
                 
                 // Fermer le menu lors du clic sur un lien
                 navLinks.forEach(link => {
+                    // Supprimer les écouteurs précédents si l'on redimensionne
+                    link.removeEventListener('click', closeMenu); 
                     link.addEventListener('click', closeMenu);
                 });
             }
@@ -342,16 +356,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Utilisation de debounce pour optimiser le redimensionnement
+    window.addEventListener('resize', debounce(createMobileMenu, 250));
     createMobileMenu();
-    window.addEventListener('resize', createMobileMenu);
+
 
     // ============================================
     // SCROLL TO TOP BUTTON
     // ============================================
 
     const scrollToTopBtn = document.createElement('button');
-    scrollToTopBtn.innerHTML = '↑';
+    scrollToTopBtn.innerHTML = '&#9650;'; // Flèche vers le haut
     scrollToTopBtn.classList.add('scroll-to-top');
+    // J'ai mis le style en ligne pour être sûr qu'il ne soit pas écrasé sur mobile, mais les media queries CSS sont meilleures.
+    // Laissez les styles CSS et utilisez une classe pour le style si possible.
     scrollToTopBtn.style.cssText = `
         position: fixed;
         bottom: 2rem;
@@ -368,6 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         visibility: hidden;
         transition: all 0.3s ease;
         z-index: 999;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     `;
 
     document.body.appendChild(scrollToTopBtn);
@@ -390,50 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // TYPEWRITER EFFECT FOR HERO TITLE (Optional)
-    // ============================================
-
-    const typewriterEffect = (element, text, speed = 100) => {
-        let i = 0;
-        element.textContent = '';
-        
-        const type = () => {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            }
-        };
-        
-        type();
-    };
-
-    // ============================================
-    // EXPERIENCE CARDS INTERSECTION OBSERVER
-    // ============================================
-
-    const experienceCards = document.querySelectorAll('.experience-card');
-    
-    const cardObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, index * 150);
-            }
-        });
-    }, { threshold: 0.2 });
-
-    experienceCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'all 0.6s ease-out';
-        cardObserver.observe(card);
-    });
-
-    // ============================================
-    // CONSOLE LOG (For debugging)
+    // CONSOLE LOG (Pour le plaisir)
     // ============================================
 
     console.log('Portfolio de Mohamed Moudjahed - Chargé avec succès! 🚀');

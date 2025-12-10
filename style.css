@@ -69,7 +69,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   NAVIGATION - Simple et épurée
+   NAVIGATION - Simple et épurée (Mobile Friendly)
    ============================================ */
 
 .nav {
@@ -104,6 +104,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     gap: 2rem;
     list-style: none;
+    transition: right 0.3s ease; /* Pour l'animation mobile */
 }
 
 .nav-link {
@@ -154,6 +155,8 @@ h1, h2, h3, h4, h5, h6 {
     padding: 6rem 2rem 4rem;
     position: relative;
     background: var(--color-white);
+    /* Ajout d'une texture de fond subtile si vous souhaitez aller plus loin */
+    /* background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="p" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="#fff"/><circle cx="50" cy="50" r="1.5" fill="%23f0f0f0"/></pattern></defs><rect width="100" height="100" fill="url(%23p)"/></svg>'); */
 }
 
 .hero-container {
@@ -229,6 +232,7 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 8px;
     transition: var(--transition-base);
     border: 2px solid transparent;
+    cursor: pointer; /* Ajout du curseur pointer */
 }
 
 .btn-primary {
@@ -259,6 +263,7 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     height: 500px;
     animation: fadeInRight 0.8s ease-out 0.5s both;
+    will-change: transform; /* Prépare pour l'effet parallax */
 }
 
 @keyframes fadeInRight {
@@ -485,12 +490,13 @@ section {
     letter-spacing: -0.02em;
 }
 
+/* Amélioration de la ligne de séparation du titre */
 .section-title::after {
     content: '';
     display: block;
     width: 60px;
     height: 4px;
-    background: var(--gradient-blue);
+    background: var(--gradient-blue); /* Utilisation du dégradé */
     margin: 1rem auto 0;
     border-radius: 2px;
 }
@@ -522,6 +528,7 @@ section {
     height: 100%;
 }
 
+/* Effet de couleur subtile sur le côté gauche */
 .expertise-item::before {
     content: '';
     position: absolute;
@@ -584,6 +591,10 @@ section {
 .timeline-item {
     position: relative;
     margin-bottom: 3rem;
+    /* Ajoutez des styles de base pour l'animation JS */
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
 }
 
 .timeline-marker {
@@ -712,13 +723,8 @@ section {
     font-size: 0.8rem;
     font-weight: 600;
     border-radius: 6px;
-    transition: var(--transition-base);
-}
-
-.tag:hover {
-    background: var(--color-primary);
-    color: white;
-    transform: translateY(-2px);
+    transition: all 0.2s ease-out; /* Changé pour une meilleure transition JS */
+    cursor: pointer;
 }
 
 /* ============================================
@@ -819,14 +825,8 @@ section {
     font-weight: 600;
     border-radius: 8px;
     border: 1px solid var(--color-border);
-    transition: var(--transition-base);
-}
-
-.spec-tag:hover {
-    background: var(--color-primary);
-    color: white;
-    border-color: var(--color-primary);
-    transform: translateY(-2px);
+    transition: all 0.2s ease-out; /* Changé pour une meilleure transition JS */
+    cursor: pointer;
 }
 
 /* ============================================
@@ -853,6 +853,8 @@ section {
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Ajout de la transition pour le tilt 3D (seulement sur desktop via JS) */
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .project-card:hover {
@@ -1049,7 +1051,7 @@ section {
     padding: 2.5rem;
     border-radius: 12px;
     border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-subtle); /* Changé pour une ombre plus légère */
 }
 
 .contact-form {
@@ -1210,7 +1212,7 @@ textarea.form-input {
     }
 }
 
-/* Petites tablettes */
+/* Petites tablettes / Mobile */
 @media (max-width: 768px) {
     html {
         font-size: 14px;
@@ -1236,7 +1238,7 @@ textarea.form-input {
     .nav-menu {
         position: fixed;
         top: 0;
-        right: -100%;
+        right: -100%; /* Caché par défaut */
         width: 70%;
         height: 100vh;
         background: var(--color-white);
@@ -1249,7 +1251,7 @@ textarea.form-input {
     }
     
     .nav-menu.active {
-        right: 0;
+        right: 0; /* Visible */
     }
     
     .nav-menu li {
@@ -1262,8 +1264,8 @@ textarea.form-input {
         padding: 1rem 0;
         font-size: 1.1rem;
     }
-    
-    /* Hamburger Button */
+
+    /* Hamburger Button (Ajout) */
     .hamburger {
         display: flex;
         flex-direction: column;
@@ -1285,7 +1287,7 @@ textarea.form-input {
     }
     
     .hamburger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(8px, 8px);
+        transform: rotate(45deg) translate(5px, 5px); /* Ajustement pour un meilleur X */
     }
     
     .hamburger.active span:nth-child(2) {
@@ -1293,7 +1295,7 @@ textarea.form-input {
     }
     
     .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -7px);
+        transform: rotate(-45deg) translate(5px, -5px); /* Ajustement pour un meilleur X */
     }
     
     /* Hero Section */
@@ -1312,6 +1314,7 @@ textarea.form-input {
         flex-wrap: wrap;
         gap: 1.5rem;
         padding: 1rem;
+        transform: none !important; /* Désactive le parallax sur mobile */
     }
     
     .decoration-circle {
@@ -1320,13 +1323,16 @@ textarea.form-input {
         animation: floatPanel 3s ease-in-out infinite;
     }
     
-    .circle-1 {
+    /* Styles pour les cercles sur mobile */
+    .circle-1, .circle-2, .circle-3 {
         width: 160px;
         height: 180px;
         top: auto;
         right: auto;
         left: auto;
-        background: linear-gradient(135deg, rgba(0, 82, 204, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%);
+        background: white;
+        border: 1px solid rgba(0, 82, 204, 0.2); /* Bordure plus douce */
+        box-shadow: var(--shadow-subtle);
     }
     
     .circle-1::before {
@@ -1334,27 +1340,10 @@ textarea.form-input {
         opacity: 0.15;
     }
     
-    .circle-2 {
-        width: 160px;
-        height: 180px;
-        top: auto;
-        right: auto;
-        left: auto;
-        background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 82, 204, 0.08) 100%);
-    }
-    
     .circle-2::before {
         font-size: 4rem;
         opacity: 0.15;
-    }
-    
-    .circle-3 {
-        width: 160px;
-        height: 180px;
-        top: auto;
-        right: auto;
-        left: auto;
-        background: linear-gradient(135deg, rgba(0, 82, 204, 0.08) 0%, rgba(0, 102, 255, 0.08) 100%);
+        color: var(--color-secondary);
     }
     
     .circle-3::before {
@@ -1405,14 +1394,6 @@ textarea.form-input {
     }
     
     /* About Section */
-    .about-text {
-        gap: 2rem;
-    }
-    
-    .lead {
-        font-size: 1rem;
-    }
-    
     .expertise-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -1485,10 +1466,6 @@ textarea.form-input {
         padding: 1.25rem;
     }
     
-    .skill-tags {
-        gap: 0.5rem;
-    }
-    
     .spec-tag {
         padding: 0.5rem 1rem;
         font-size: 0.85rem;
@@ -1502,6 +1479,7 @@ textarea.form-input {
     
     .project-card {
         margin-bottom: 0;
+        transition: var(--transition-base); /* Supprime le tilt sur mobile */
     }
     
     .project-image {
@@ -1571,7 +1549,7 @@ textarea.form-input {
         margin: -1rem 0;
     }
     
-    /* Scroll to top button */
+    /* Scroll to top button (Style ajusté via JS, ici juste pour override la taille) */
     .scroll-to-top {
         width: 45px !important;
         height: 45px !important;
@@ -1674,7 +1652,7 @@ textarea.form-input {
 
 
 /* ============================================
-   SCROLL ANIMATIONS
+   SCROLL ANIMATIONS & OVERLAY
    ============================================ */
 
 .animate-on-scroll {
@@ -1691,6 +1669,7 @@ textarea.form-input {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     animation: fadeIn 0.3s ease;
+    cursor: pointer;
 }
 
 @keyframes fadeIn {
