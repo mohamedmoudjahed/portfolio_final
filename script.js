@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const observerOptions = {
         threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        rootMargin: '0px 0px -100px 0px'
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -73,6 +73,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     animateElements.forEach(el => {
         observer.observe(el);
+    });
+
+    // ============================================
+    // TRANSITION ANIMATIONS ON SCROLL
+    // ============================================
+
+    const transitionObserverOptions = {
+        threshold: 0.3,
+        rootMargin: '0px'
+    };
+
+    const transitionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Trigger sliding panels
+                const slidingPanels = entry.target.querySelectorAll('.sliding-panel');
+                slidingPanels.forEach((panel, index) => {
+                    setTimeout(() => {
+                        panel.classList.add('animate');
+                    }, index * 150);
+                });
+                
+                // Trigger unfolding panels
+                const foldSections = entry.target.querySelectorAll('.fold-section');
+                foldSections.forEach((section, index) => {
+                    setTimeout(() => {
+                        section.classList.add('animate');
+                    }, index * 200);
+                });
+                
+                transitionObserver.unobserve(entry.target);
+            }
+        });
+    }, transitionObserverOptions);
+
+    // Observe transition elements
+    const transitionElements = document.querySelectorAll('.section-divider, .unfolding-panel');
+    transitionElements.forEach(el => {
+        transitionObserver.observe(el);
     });
 
     // ============================================
