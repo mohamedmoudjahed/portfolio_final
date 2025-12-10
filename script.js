@@ -266,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hamburger = document.createElement('button');
                 hamburger.classList.add('hamburger');
                 hamburger.setAttribute('aria-label', 'Menu');
+                hamburger.setAttribute('aria-expanded', 'false');
                 hamburger.innerHTML = `
                     <span></span>
                     <span></span>
@@ -273,31 +274,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 navContainer.appendChild(hamburger);
                 
-                // Ajouter l'événement click
-                hamburger.addEventListener('click', () => {
-                    navMenu.classList.toggle('active');
+                // Fonction pour toggle le menu
+                const toggleMenu = () => {
+                    const isActive = navMenu.classList.toggle('active');
                     hamburger.classList.toggle('active');
-                    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+                    hamburger.setAttribute('aria-expanded', isActive);
+                    document.body.style.overflow = isActive ? 'hidden' : '';
+                    
+                    if (isActive) {
+                        createOverlay();
+                    } else {
+                        removeOverlay();
+                    }
+                };
+                
+                // Fonction pour créer l'overlay
+                const createOverlay = () => {
+                    let overlay = document.querySelector('.menu-overlay');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.classList.add('menu-overlay');
+                        overlay.addEventListener('click', closeMenu);
+                        document.body.appendChild(overlay);
+                    }
+                };
+                
+                // Fonction pour supprimer l'overlay
+                const removeOverlay = () => {
+                    const overlay = document.querySelector('.menu-overlay');
+                    if (overlay) {
+                        overlay.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => overlay.remove(), 300);
+                    }
+                };
+                
+                // Fonction pour fermer le menu
+                const closeMenu = () => {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                    removeOverlay();
+                };
+                
+                // Ajouter l'événement click au hamburger
+                hamburger.addEventListener('click', toggleMenu);
+                
+                // Fermer le menu lors du clic sur un lien
+                navLinks.forEach(link => {
+                    link.addEventListener('click', closeMenu);
                 });
             }
-            
-            // Fermer le menu lors du clic sur un lien
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    navMenu.classList.remove('active');
-                    hamburger.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-            
-            // Fermer le menu lors du clic en dehors
-            document.addEventListener('click', (e) => {
-                if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-                    navMenu.classList.remove('active');
-                    hamburger.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
             
         } else {
             // Supprimer le hamburger sur grand écran
@@ -306,6 +333,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             navMenu.classList.remove('active');
             document.body.style.overflow = '';
+            
+            // Supprimer l'overlay s'il existe
+            const overlay = document.querySelector('.menu-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
         }
     };
 
