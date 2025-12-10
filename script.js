@@ -160,30 +160,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // PROJECT CARDS TILT EFFECT
+    // PROJECT CARDS TILT EFFECT (Desktop only)
     // ============================================
 
     const projectCards = document.querySelectorAll('.project-card');
     
-    projectCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+    // Désactiver l'effet tilt sur mobile pour de meilleures performances
+    if (window.innerWidth > 768) {
+        projectCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            });
             
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
         });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-        });
-    });
+    }
 
     // ============================================
     // COUNTER ANIMATION FOR STATS (if needed)
@@ -247,25 +250,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================
-    // MOBILE MENU TOGGLE (if needed)
+    // MOBILE MENU TOGGLE
     // ============================================
 
     const createMobileMenu = () => {
+        const navMenu = document.querySelector('.nav-menu');
+        const navContainer = document.querySelector('.nav-container');
+        
+        // Vérifier si le hamburger existe déjà
+        let hamburger = document.querySelector('.hamburger');
+        
         if (window.innerWidth <= 768) {
-            const navMenu = document.querySelector('.nav-menu');
-            const hamburger = document.createElement('button');
-            hamburger.classList.add('hamburger');
-            hamburger.innerHTML = '☰';
-            
-            const navContainer = document.querySelector('.nav-container');
-            if (!navContainer.querySelector('.hamburger')) {
-                navContainer.insertBefore(hamburger, navMenu);
+            // Créer le hamburger s'il n'existe pas
+            if (!hamburger) {
+                hamburger = document.createElement('button');
+                hamburger.classList.add('hamburger');
+                hamburger.setAttribute('aria-label', 'Menu');
+                hamburger.innerHTML = `
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                `;
+                navContainer.appendChild(hamburger);
+                
+                // Ajouter l'événement click
+                hamburger.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+                });
             }
             
-            hamburger.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-                hamburger.classList.toggle('active');
+            // Fermer le menu lors du clic sur un lien
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
             });
+            
+            // Fermer le menu lors du clic en dehors
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+        } else {
+            // Supprimer le hamburger sur grand écran
+            if (hamburger) {
+                hamburger.remove();
+            }
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
         }
     };
 
